@@ -1,3 +1,6 @@
+#include "EventLoop.h"
+#include <memory>
+
 #include <iostream>
 #include <sys/epoll.h>
 #include <fcntl.h>
@@ -12,8 +15,9 @@ using namespace std;
 
 class TcpServer {
 private:
-    int epollfd;
-    int listenfd;
+    int epollfd_;
+    int listenfd_;
+    unique_ptr<EventLoop> loop_;
 public:
     TcpServer();
     ~TcpServer() {}
