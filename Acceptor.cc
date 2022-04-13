@@ -14,8 +14,8 @@ socklen_t clilen = sizeof(struct sockaddr_in);
 
 
 // 注意成员初值列和 Acceptor 类成员的顺序
-Acceptor::Acceptor(EventLoop *loop, int listenfd, NewConnectionReadCallback &cb): 
-                    listenfd_(listenfd), loop_(loop), newConnectionReadCallback_(cb),
+Acceptor::Acceptor(EventLoop *loop, int listenfd): 
+                    listenfd_(listenfd), loop_(loop),
 					acceptChannel_(loop_, listenfd_)
                     
 {
@@ -40,7 +40,7 @@ void Acceptor::listen() {
 	ret = ::listen(listenfd_, MAX_LISTENFD);
 	assert(ret != -1);
 
-    acceptChannel_.setReadCallBack(std::bind(&Acceptor::handleRead, this));
+    acceptChannel_.setReadCallback(std::bind(&Acceptor::handleRead, this));
     acceptChannel_.enableReading();
 }
 
@@ -58,7 +58,5 @@ void Acceptor::handleRead() {
 	}
 	fcntl(connfd, F_SETFL, O_NONBLOCK);
 
-	Channel *newChannel = new Channel(loop_, connfd);
-	newChannel->setReadCallBack(std::bind(newConnectionReadCallback_, connfd));
-	newChannel->enableReading();
+	newConnectionCallback_(connfd);
 }

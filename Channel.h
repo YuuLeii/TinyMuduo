@@ -16,13 +16,13 @@ public:
 
 	void handleEvent();
 
-	void setReadCallBack(ReadEventCallback cb) {
+	void setReadCallback(ReadEventCallback cb) {
 		readCallback_ = std::move(cb);
 	}
 	void setWriteCallback(EventCallback cb) {
 		writeCallback_ = std::move(cb);
 	}
-	void setCloseCallback_(EventCallback cb) {
+	void setCloseCallback(EventCallback cb) {
 		closeCallback_ = std::move(cb);
 	}
 	void setErrorCallback(EventCallback cb) {
