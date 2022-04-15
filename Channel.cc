@@ -18,6 +18,10 @@ void Channel::update() {
 	loop_->updateChannel(this);
 }
 
+void Channel::remove() {
+	loop_->removeChannel(this);
+}
+
 void Channel::handleEvent() {
 	eventHandling_ = true;
 	if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {

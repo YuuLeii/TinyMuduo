@@ -1,9 +1,6 @@
 #include "TcpConnction.h"
 #include <unistd.h>
-#include <string.h>
-#include <iostream>
-using std::cout;
-using std::endl;
+// #include <string.h>
 
 class EventLoop;
 class Channel;
@@ -15,13 +12,17 @@ TcpConnection::TcpConnection(EventLoop *loop, int sockfd)
 
 	channel_->setReadCallback(std::bind(&TcpConnection::handleRead, this));
 	channel_->setWriteCallback(std::bind(&TcpConnection::handleWrite, this));
-	channel_->setCloseCallback(std::bind(&TcpConnection::handleError, this));
+	channel_->setCloseCallback(std::bind(&TcpConnection::handleClose, this));
 	channel_->setErrorCallback(std::bind(&TcpConnection::handleError, this));
 
 }
 
 void TcpConnection::connectEstablished() {
 	channel_->enableReading();
+}
+
+void TcpConnection::connectDestory() {
+	channel_->remove();
 }
 
 void TcpConnection::handleRead() {
@@ -38,8 +39,7 @@ void TcpConnection::handleRead() {
 }
 
 void TcpConnection::handleWrite() {
-	ssize_t n = ::write(channel_->fd(), readbuf_, strlen(readbuf_));
-	cout << "Write " << n << "bytes. " << endl;
+	// ssize_t n = ::write(channel_->fd(), readbuf_, strlen(readbuf_));
 }
 
 void TcpConnection::handleClose() {

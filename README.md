@@ -6,3 +6,4 @@
 * v4 增加 Acceptor 类
 * v5 增加 TcpConnection 类
 	- 只需定义 TcpConnection 里的 handle* 函数即可实现一个简单的应用程序，如 echo 等
+* v6 增加 Epoll 类

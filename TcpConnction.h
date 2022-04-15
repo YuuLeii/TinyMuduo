@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <functional>
+
 #include "Channel.h"
 
 class EventLoop;
@@ -18,9 +19,10 @@ public:
 
 	void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
 	void setCloseCallback(CloseCallback cb) {  closeCallback_ = std::move(cb);  }
-
+	Channel* getChannel() const { return channel_.get(); }
 	// called when TcpServer accepts a new connection and should be called only once.
 	void connectEstablished();
+	void connectDestory();
 private:
 	void handleRead();
 	void handleWrite();

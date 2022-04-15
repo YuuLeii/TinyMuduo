@@ -2,20 +2,24 @@
 #define EVENTLOOP_H
 
 #include <vector>
+#include <memory>
+
 #include "Channel.h"
+#include "Epoll.h"
 
 class Channel;
+
 class EventLoop {
 public:
-	EventLoop() = delete;
-	EventLoop(int epfd, int listenfd);
+	EventLoop();
+	EventLoop(const EventLoop&) = delete;
+	EventLoop& operator=(const EventLoop&) = delete;
 
 	void updateChannel(Channel*);
+	void removeChannel(Channel*);
 	void loop();
 private:
-	const int epollfd_;
-	const int listenfd_;
-
+	std::unique_ptr<Epoll> poller_;
 	typedef std::vector<Channel*> ChannelList;
 
 	bool eventHandling_;

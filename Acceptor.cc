@@ -14,12 +14,12 @@ socklen_t clilen = sizeof(struct sockaddr_in);
 
 
 // 注意成员初值列和 Acceptor 类成员的顺序
-Acceptor::Acceptor(EventLoop *loop, int listenfd): 
-                    listenfd_(listenfd), loop_(loop),
+Acceptor::Acceptor(EventLoop *loop): 
+                    listenfd_(::socket(AF_INET, SOCK_STREAM, 0)), loop_(loop),
 					acceptChannel_(loop_, listenfd_)
                     
 {
-
+	assert(listenfd_ != -1);
 }
 
 void Acceptor::listen() {

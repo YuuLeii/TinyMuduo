@@ -41,6 +41,8 @@ public:
 	int fd() const {	return fd_;	}
 	int events() const {	return events_;	}
 	void set_revents(int revt) { revents_ = revt; }   // used by epoll
+
+	void remove();
 private:
 	void update();
 

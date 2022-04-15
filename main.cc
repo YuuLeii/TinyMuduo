@@ -1,8 +1,9 @@
+#include <iostream>
+
 #include "TcpServer.h"
 
-#include <iostream>
 void func() {
-	std::cout << "what happened." << std::endl;
+	// std::cout << "what happened." << std::endl;
 }
 
 int main(int argc, char* argv[]) {

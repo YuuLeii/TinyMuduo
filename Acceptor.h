@@ -9,7 +9,7 @@ class Acceptor {
     typedef std::function<void(int)> NewConnectionCallback;
 public:
     Acceptor() = delete;
-    Acceptor(EventLoop *loop, int listenfd);
+    Acceptor(EventLoop *loop);
     Acceptor(const Acceptor&) = delete;
     ~Acceptor() {}
     void listen();
