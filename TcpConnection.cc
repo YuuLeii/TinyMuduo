@@ -1,6 +1,7 @@
 #include "TcpConnction.h"
 #include <unistd.h>
-// #include <string.h>
+
+extern int MAX_LINE;
 
 class EventLoop;
 class Channel;
@@ -26,12 +27,14 @@ void TcpConnection::connectDestory() {
 }
 
 void TcpConnection::handleRead() {
-	ssize_t n = ::read(channel_->fd(), readbuf_, sizeof(readbuf_));
-	if (n > 0) {
+	char line[MAX_LINE];
+	ssize_t readlength = inputBuffer_.readFd(channel_->fd());
+	if (readlength  > 0) {
 		if (messageCallback_)
-			messageCallback_();
+			messageCallback_(this, &inputBuffer_);
 
-	} else if (n == 0) {
+		channel_->enableWriting();
+	} else if (readlength == 0) {
 		handleClose();
 	} else {
 		handleError();
@@ -39,7 +42,33 @@ void TcpConnection::handleRead() {
 }
 
 void TcpConnection::handleWrite() {
-	// ssize_t n = ::write(channel_->fd(), readbuf_, strlen(readbuf_));
+	if (channel_->isWriting()) {
+		ssize_t n = ::write(channel_->fd(), outputBuffer_.str().c_str(), outputBuffer_.str().length());
+		if (n > 0) {
+			outputBuffer_.update(n);
+			if (outputBuffer_.empty()) {
+				channel_->disableWriting();
+			}
+		}
+	}
+}
+
+// 库的使用者只需要调用send把要发给客户端连接的数据存到outputBuffer里，该库负责把数据发送出去
+void TcpConnection::send(const string& message) {
+	size_t n = 0;
+	// if outputBuffer is empty, write to socket immediately.
+	if (outputBuffer_.empty()) {
+		n = write(sockfd_, message.c_str(), message.length());
+		if (n < 0) 
+			;
+			// LOG("write error");
+	}
+
+	if (n < static_cast<int>(message.length())) {
+		outputBuffer_.str() += message.substr(n);
+		if (!channel_->isWriting())
+			channel_->enableWriting();
+	}
 }
 
 void TcpConnection::handleClose() {

@@ -8,11 +8,15 @@
 using std::unique_ptr;
 
 class TcpConnection;
+class Buffer;
 class TcpServer {
-    typedef std::function<void()> MessageCallback;
+    typedef std::function<void(TcpConnection*, Buffer*)> MessageCallback;
 public:
     TcpServer();
+    TcpServer(const TcpServer&) = delete;
+    TcpServer& operator=(const TcpServer&) = delete;
     ~TcpServer() {}
+
     void start();
     void loop();
     void setMessageCallback(const MessageCallback &cb) { messageCallback_ = cb; }

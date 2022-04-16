@@ -11,6 +11,9 @@ public:
 	typedef std::function<void()> EventCallback;
 	typedef std::function<void()> ReadEventCallback;
 	Channel () = delete;
+	Channel(const Channel&) = delete;
+	Channel& operator=(const Channel&) = delete;
+
 	Channel(EventLoop *loop, int fd);
 	~Channel();
 

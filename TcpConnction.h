@@ -5,24 +5,29 @@
 #include <functional>
 
 #include "Channel.h"
+#include "Buffer.h"
 
 class EventLoop;
 
 class TcpConnection {
 private:
-	typedef std::function<void()> MessageCallback;
+	typedef std::function<void(TcpConnection*, Buffer*)> MessageCallback;
 	typedef std::function<void(int)> CloseCallback;
-	typedef char (Buffer)[1024];
 public:
+	TcpConnection() = delete;
+	TcpConnection(const TcpConnection&) = delete;
+	TcpConnection& operator=(const TcpConnection&) = delete;
 	TcpConnection(EventLoop *loop, int sockfd);
 	~TcpConnection() {}
 
 	void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
 	void setCloseCallback(CloseCallback cb) {  closeCallback_ = std::move(cb);  }
-	Channel* getChannel() const { return channel_.get(); }
+
 	// called when TcpServer accepts a new connection and should be called only once.
 	void connectEstablished();
+	// called when TcpServer removes me from its map and should be called only once.
 	void connectDestory();
+	void send(const string&);
 private:
 	void handleRead();
 	void handleWrite();
@@ -33,8 +38,8 @@ private:
 	int sockfd_;
 	std::unique_ptr<Channel> channel_;
 
-	Buffer readbuf_;
-	Buffer writebuf_;
+	Buffer inputBuffer_;
+	Buffer outputBuffer_;
 
 	MessageCallback messageCallback_;
 	CloseCallback closeCallback_;
