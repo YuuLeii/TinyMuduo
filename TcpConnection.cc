@@ -45,9 +45,13 @@ void TcpConnection::handleWrite() {
 	if (channel_->isWriting()) {
 		ssize_t n = ::write(channel_->fd(), outputBuffer_.str().c_str(), outputBuffer_.str().length());
 		if (n > 0) {
-			outputBuffer_.update(n);
+			outputBuffer_.retrieve(n);
 			if (outputBuffer_.empty()) {
 				channel_->disableWriting();
+
+				if (writeCompleteCallback_)
+					loop_->queueInLoop(std::bind(writeCompleteCallback_, this));
+
 			}
 		}
 	}
@@ -62,6 +66,10 @@ void TcpConnection::send(const string& message) {
 		if (n < 0) 
 			;
 			// LOG("write error");
+		else if (n == static_cast<int>(message.length())) {
+			if (writeCompleteCallback_)
+				loop_->queueInLoop(std::bind(writeCompleteCallback_, this));
+		}
 	}
 
 	if (n < static_cast<int>(message.length())) {

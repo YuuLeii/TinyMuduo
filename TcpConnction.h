@@ -12,6 +12,7 @@ class EventLoop;
 class TcpConnection {
 private:
 	typedef std::function<void(TcpConnection*, Buffer*)> MessageCallback;
+	typedef std::function<void(TcpConnection*)> WriteCompleteCallback;
 	typedef std::function<void(int)> CloseCallback;
 public:
 	TcpConnection() = delete;
@@ -22,6 +23,7 @@ public:
 
 	void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
 	void setCloseCallback(CloseCallback cb) {  closeCallback_ = std::move(cb);  }
+	void setWriteCompleteCallback(WriteCompleteCallback cb) {	writeCompleteCallback_ = std::move(cb);	}
 
 	// called when TcpServer accepts a new connection and should be called only once.
 	void connectEstablished();
@@ -42,6 +44,7 @@ private:
 	Buffer outputBuffer_;
 
 	MessageCallback messageCallback_;
+	WriteCompleteCallback writeCompleteCallback_;
 	CloseCallback closeCallback_;
 };
 

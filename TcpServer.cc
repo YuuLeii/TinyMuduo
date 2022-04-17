@@ -10,6 +10,8 @@ void TcpServer::handleNewConnection(int sockfd) {
 	// set Callback
 	// newTcpConn->set**Callback();
 	newTcpConn->setMessageCallback(messageCallback_);
+	newTcpConn->setWriteCompleteCallback(writeCompleteCallback_);
+
 	newTcpConn->setCloseCallback(std::bind(&TcpServer::removeConnection, this, std::placeholders::_1));
 
 	connections_[sockfd] = newTcpConn;

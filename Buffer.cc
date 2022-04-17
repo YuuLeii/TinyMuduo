@@ -1,4 +1,5 @@
 #include <unistd.h>
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -15,6 +16,9 @@ int Buffer::readFd(int sockfd) {
     return readlen;
 }
 
+int Buffer::readableBytes() {
+    return static_cast<int>(buffer_.size());
+}
 void Buffer::append(const char* data, size_t len) {
     buffer_ += data;
 }
@@ -24,6 +28,6 @@ void Buffer::print() {
     buffer_.clear();
 }
 
-void Buffer::update(int have_sent) {
+void Buffer::retrieve(int have_sent) {
     buffer_ = buffer_.substr(have_sent);
 }
